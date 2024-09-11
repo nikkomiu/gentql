@@ -1,6 +1,10 @@
 package gql
 
-import "github.com/99designs/gqlgen/graphql/handler"
+import (
+	"context"
+
+	"github.com/99designs/gqlgen/graphql/handler"
+)
 
 //go:generate go run github.com/99designs/gqlgen generate
 
@@ -12,6 +16,6 @@ func NewResolver() Config {
 	}
 }
 
-func NewServer() *handler.Server {
+func NewServer(ctx context.Context) *handler.Server {
 	return handler.NewDefaultServer(NewExecutableSchema(NewResolver()))
 }

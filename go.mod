@@ -8,6 +8,7 @@ require (
 	entgo.io/ent v0.14.1
 	github.com/99designs/gqlgen v0.17.49
 	github.com/go-chi/chi/v5 v5.1.0
+	github.com/lib/pq v1.10.9
 	github.com/spf13/cobra v1.8.1
 	github.com/vektah/gqlparser/v2 v2.5.16
 )

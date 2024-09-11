@@ -2,12 +2,14 @@ package cmd
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/spf13/cobra"
 
+	"github.com/nikkomiu/gentql/ent"
 	"github.com/nikkomiu/gentql/gql"
 )
 
@@ -22,6 +24,13 @@ func init() {
 }
 
 func runAPI(cmd *cobra.Command, args []string) error {
+	entClient, err := ent.Open("postgres", os.Getenv("DATABASE_URL"))
+	if err != nil {
+		return err
+	}
+	ctx := ent.NewContext(cmd.Context(), entClient)
+	defer entClient.Close()
+
 	router := chi.NewRouter()
 
 	router.Use(
@@ -31,11 +40,11 @@ func runAPI(cmd *cobra.Command, args []string) error {
 		middleware.Recoverer,
 	)
 
-	srv := gql.NewServer()
+	srv := gql.NewServer(ctx)
 	router.Handle("/graphql", srv)
 	router.Handle("/graphiql", playground.Handler("GentQL", "/graphql"))
 
-	err := http.ListenAndServe(":8080", router)
+	err = http.ListenAndServe(":8080", router)
 	if err != nil {
 		return err
 	}
