@@ -4,18 +4,24 @@ import (
 	"context"
 
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/nikkomiu/gentql/ent"
 )
 
 //go:generate go run github.com/99designs/gqlgen generate
 
-type Resolver struct{}
+type Resolver struct {
+	ent *ent.Client
+}
 
-func NewResolver() Config {
+func NewResolver(entClient *ent.Client) Config {
 	return Config{
-		Resolvers: &Resolver{},
+		Resolvers: &Resolver{
+			ent: entClient,
+		},
 	}
 }
 
 func NewServer(ctx context.Context) *handler.Server {
-	return handler.NewDefaultServer(NewExecutableSchema(NewResolver()))
+	resolver := NewResolver(ent.FromContext(ctx))
+	return handler.NewDefaultServer(NewExecutableSchema(resolver))
 }
