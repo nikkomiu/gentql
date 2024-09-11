@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi/v5"
@@ -11,6 +11,7 @@ import (
 
 	"github.com/nikkomiu/gentql/ent"
 	"github.com/nikkomiu/gentql/gql"
+	"github.com/nikkomiu/gentql/pkg/config"
 	"github.com/nikkomiu/gentql/pkg/errors"
 )
 
@@ -25,7 +26,9 @@ func init() {
 }
 
 func runAPI(cmd *cobra.Command, args []string) error {
-	entClient, err := ent.Open("postgres", os.Getenv("DATABASE_URL"))
+	cfg := config.GetApp()
+
+	entClient, err := ent.Open(cfg.Database.Driver, cfg.Database.URL)
 	if err != nil {
 		return errors.NewExitCode(err, 3)
 	}
@@ -45,10 +48,6 @@ func runAPI(cmd *cobra.Command, args []string) error {
 	router.Handle("/graphql", srv)
 	router.Handle("/graphiql", playground.Handler("GentQL", "/graphql"))
 
-	err = http.ListenAndServe(":8080", router)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	fmt.Printf("starting server at %s\n", cfg.Server.DisplayAddr())
+	return http.ListenAndServe(cfg.Server.Addr(), router)
 }

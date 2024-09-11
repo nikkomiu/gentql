@@ -6,6 +6,8 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/nikkomiu/gentql/ent"
+	"github.com/nikkomiu/gentql/pkg/config"
+	"github.com/nikkomiu/gentql/pkg/errors"
 )
 
 var migrateCmd = &cobra.Command{
@@ -26,9 +28,11 @@ func runMigrate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	entClient, err := ent.Open("postgres", os.Getenv("DATABASE_URL"))
+	cfg := config.GetApp()
+
+	entClient, err := ent.Open(cfg.Database.Driver, cfg.Database.URL)
 	if err != nil {
-		return err
+		return errors.NewExitCode(err, 3)
 	}
 	defer entClient.Close()
 
