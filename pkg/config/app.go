@@ -2,7 +2,8 @@ package config
 
 import (
 	"fmt"
-	"os"
+
+	"github.com/nikkomiu/gentql/pkg/env"
 )
 
 type App struct {
@@ -35,12 +36,12 @@ func (hs HTTPServer) Addr() string {
 func GetApp() App {
 	return App{
 		Server: HTTPServer{
-			Host: "",
-			Port: 8080,
+			Host: env.Str("ADDRESS", ""),
+			Port: env.Int("PORT", 8080),
 		},
 		Database: Database{
-			Driver: "postgres",
-			URL:    os.Getenv("DATABASE_URL"),
+			Driver: env.Str("DATABASE_DRIVER", "postgres"),
+			URL:    env.Str("DATABASE_URL", "postgres://localhost/gentql_dev?sslmode=disable"),
 		},
 	}
 }
