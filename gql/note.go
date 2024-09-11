@@ -64,8 +64,16 @@ func (r *noteResolver) BodyHTML(ctx context.Context, obj *ent.Note) (string, err
 }
 
 // Notes is the resolver for the notes field.
-func (r *queryResolver) Notes(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.NoteOrder) (*ent.NoteConnection, error) {
-	return r.ent.Note.Query().Paginate(ctx, after, first, before, last, ent.WithNoteOrder(orderBy))
+func (r *queryResolver) Notes(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.NoteOrder, where *ent.NoteWhereInput) (*ent.NoteConnection, error) {
+	return r.ent.Note.Query().Paginate(
+		ctx,
+		after,
+		first,
+		before,
+		last,
+		ent.WithNoteOrder(orderBy),
+		ent.WithNoteFilter(where.Filter),
+	)
 }
 
 // Mutation returns MutationResolver implementation.

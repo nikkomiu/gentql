@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	ex, err := entgql.NewExtension()
+	ex, err := entgql.NewExtension(entgql.WithWhereInputs(true))
 	if err != nil {
 		log.Fatalf("creating entgql extension: %s", err)
 	}

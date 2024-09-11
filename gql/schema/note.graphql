@@ -31,6 +31,44 @@ input NoteOrder {
   field: NoteOrderField
 }
 
+input NoteWhereInput {
+  not: NoteWhereInput
+  and: [NoteWhereInput!]
+  or: [NoteWhereInput!]
+
+  title: String
+  titleNEQ: String
+  titleIn: [String!]
+  titleNotIn: [String!]
+  titleGT: String
+  titleGTE: String
+  titleLT: String
+  titleLTE: String
+  titleContains: String
+  titleHasPrefix: String
+  titleHasSuffix: String
+  titleEqualFold: String
+  titleContainsFold: String
+
+  createdAt: Time
+  createdAtNEQ: Time
+  createdAtIn: [Time!]
+  createdAtNotIn: [Time!]
+  createdAtGT: Time
+  createdAtGTE: Time
+  createdAtLT: Time
+  createdAtLTE: Time
+
+  updatedAt: Time
+  updatedAtNEQ: Time
+  updatedAtIn: [Time!]
+  updatedAtNotIn: [Time!]
+  updatedAtGT: Time
+  updatedAtGTE: Time
+  updatedAtLT: Time
+  updatedAtLTE: Time
+}
+
 enum NoteOrderField {
   TITLE
   CREATED_AT
@@ -39,11 +77,12 @@ enum NoteOrderField {
 
 extend type Query {
   notes(
-    after: Cursor,
-    first: Int,
-    before: Cursor,
-    last: Int,
+    after: Cursor
+    first: Int
+    before: Cursor
+    last: Int
     orderBy: NoteOrder
+    where: NoteWhereInput
   ): NoteConnection!
 }
 
