@@ -22,12 +22,24 @@ func (r *mutationResolver) CreateNote(ctx context.Context, input model.NoteInput
 
 // UpdateNote is the resolver for the updateNote field.
 func (r *mutationResolver) UpdateNote(ctx context.Context, id int, input model.NoteInput) (*ent.Note, error) {
-	panic(fmt.Errorf("not implemented: UpdateNote - updateNote"))
+	return r.ent.Note.UpdateOneID(id).
+		SetTitle(input.Title).
+		SetBody(input.Body).
+		Save(ctx)
 }
 
 // DeleteNote is the resolver for the deleteNote field.
 func (r *mutationResolver) DeleteNote(ctx context.Context, id int) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteNote - deleteNote"))
+	err := r.ent.Note.DeleteOneID(id).Exec(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return false, nil
+		}
+
+		return false, err
+	}
+
+	return true, nil
 }
 
 // NodeID is the resolver for the nodeId field.
