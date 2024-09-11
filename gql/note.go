@@ -10,7 +10,10 @@ import (
 
 // CreateNote is the resolver for the createNote field.
 func (r *mutationResolver) CreateNote(ctx context.Context, input model.NoteInput) (*ent.Note, error) {
-	panic(fmt.Errorf("not implemented: CreateNote - createNote"))
+	return r.ent.Note.Create().
+		SetTitle(input.Title).
+		SetBody(input.Body).
+		Save(ctx)
 }
 
 // UpdateNote is the resolver for the updateNote field.
