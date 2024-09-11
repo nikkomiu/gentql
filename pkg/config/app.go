@@ -33,8 +33,10 @@ func (hs HTTPServer) Addr() string {
 	return fmt.Sprintf("%s:%d", hs.Host, hs.Port)
 }
 
-func GetApp() App {
-	return App{
+var currentApp *App
+
+func loadApp() {
+	currentApp = &App{
 		Server: HTTPServer{
 			Host: env.Str("ADDRESS", ""),
 			Port: env.Int("PORT", 8080),
@@ -44,4 +46,11 @@ func GetApp() App {
 			URL:    env.Str("DATABASE_URL", "postgres://localhost/gentql_dev?sslmode=disable"),
 		},
 	}
+}
+
+func GetApp() App {
+	if currentApp == nil {
+		loadApp()
+	}
+	return *currentApp
 }
