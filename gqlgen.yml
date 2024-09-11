@@ -16,6 +16,8 @@ resolver:
   filename_template: "{name}.go"
   omit_template_comment: false
 
+omit_gqlgen_file_notice: true
+
 models:
   ID:
     model:
