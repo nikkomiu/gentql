@@ -1,0 +1,2 @@
+gql/model/*_gen.go
+gql/generated.go
