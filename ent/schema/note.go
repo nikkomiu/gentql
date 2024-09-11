@@ -3,6 +3,7 @@ package schema
 import (
 	"time"
 
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 )
@@ -15,14 +16,23 @@ type Note struct {
 // Fields of the Note.
 func (Note) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("title"),
+		field.String("title").
+			Annotations(
+				entgql.OrderField("TITLE"),
+			),
 		field.Text("body"),
 
 		field.Time("createdAt").
-			Default(time.Now),
+			Default(time.Now).
+			Annotations(
+				entgql.OrderField("CREATED_AT"),
+			),
 		field.Time("updatedAt").
 			Default(time.Now).
-			UpdateDefault(time.Now),
+			UpdateDefault(time.Now).
+			Annotations(
+				entgql.OrderField("UPDATED_AT"),
+			),
 	}
 }
 

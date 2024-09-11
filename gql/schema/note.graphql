@@ -26,8 +26,25 @@ input NoteInput {
   body: String!
 }
 
+input NoteOrder {
+  direction: OrderDirection!
+  field: NoteOrderField
+}
+
+enum NoteOrderField {
+  TITLE
+  CREATED_AT
+  UPDATED_AT
+}
+
 extend type Query {
-  notes(after: Cursor, first: Int, before: Cursor, last: Int): NoteConnection!
+  notes(
+    after: Cursor,
+    first: Int,
+    before: Cursor,
+    last: Int,
+    orderBy: NoteOrder
+  ): NoteConnection!
 }
 
 extend type Mutation {

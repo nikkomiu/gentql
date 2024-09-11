@@ -8,6 +8,11 @@ type PageInfo {
   endCursor: Cursor
 }
 
+enum OrderDirection {
+  ASC
+  DESC
+}
+
 interface Node {
   nodeId: ID!
 }
