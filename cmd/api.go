@@ -11,6 +11,7 @@ import (
 
 	"github.com/nikkomiu/gentql/ent"
 	"github.com/nikkomiu/gentql/gql"
+	"github.com/nikkomiu/gentql/pkg/errors"
 )
 
 var apiCmd = &cobra.Command{
@@ -26,7 +27,7 @@ func init() {
 func runAPI(cmd *cobra.Command, args []string) error {
 	entClient, err := ent.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
-		return err
+		return errors.NewExitCode(err, 3)
 	}
 	ctx := ent.NewContext(cmd.Context(), entClient)
 	defer entClient.Close()
