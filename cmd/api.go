@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi/v5"
@@ -50,5 +49,5 @@ func runAPI(cmd *cobra.Command, args []string) error {
 	router.Handle("/graphiql", playground.Handler("GentQL", "/graphql"))
 
 	fmt.Printf("starting server at %s\n", cfg.Server.DisplayAddr())
-	return sig.ListenAndServe(ctx, cfg.Server.Addr(), router, 3*time.Second)
+	return sig.ListenAndServe(ctx, cfg.Server.Addr(), router, cfg.Server.ShutdownTimeout)
 }

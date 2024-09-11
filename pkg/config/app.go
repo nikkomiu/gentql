@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/nikkomiu/gentql/pkg/env"
 )
@@ -14,6 +15,8 @@ type App struct {
 type HTTPServer struct {
 	Host string
 	Port int
+
+	ShutdownTimeout time.Duration
 }
 
 type Database struct {
@@ -40,6 +43,8 @@ func loadApp() {
 		Server: HTTPServer{
 			Host: env.Str("ADDRESS", ""),
 			Port: env.Int("PORT", 8080),
+
+			ShutdownTimeout: env.Duration("SERVER_SHUTDOWN_TIMEOUT", 10*time.Second),
 		},
 		Database: Database{
 			Driver: env.Str("DATABASE_DRIVER", "postgres"),
