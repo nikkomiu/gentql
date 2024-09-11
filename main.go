@@ -2,17 +2,26 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	"github.com/nikkomiu/gentql/cmd"
+	"github.com/nikkomiu/gentql/pkg/errors"
 )
 
 func main() {
 	ctx := context.Background()
 
 	if err := cmd.Execute(ctx); err != nil {
-		fmt.Fprintf(os.Stderr, "failed to execute gentql: %s\n", err)
-		os.Exit(1)
+		var exitCode int
+		switch typedErr := err.(type) {
+		case errors.ExitCodeError:
+			exitCode = typedErr.ExitCode()
+
+		default:
+			exitCode = 1
+		}
+
+		os.Exit(exitCode)
 	}
+
 }
