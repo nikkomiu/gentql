@@ -11,7 +11,7 @@ import (
 
 // Hello is the resolver for the hello field.
 func (r *queryResolver) Hello(ctx context.Context, name string) (string, error) {
-	panic(fmt.Errorf("not implemented: Hello - hello"))
+	return fmt.Sprintf("Hello, %s!", name), nil
 }
 
 // Query returns QueryResolver implementation.
