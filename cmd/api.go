@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"net/http"
+	"time"
 
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi/v5"
@@ -13,6 +13,7 @@ import (
 	"github.com/nikkomiu/gentql/gql"
 	"github.com/nikkomiu/gentql/pkg/config"
 	"github.com/nikkomiu/gentql/pkg/errors"
+	"github.com/nikkomiu/gentql/pkg/sig"
 )
 
 var apiCmd = &cobra.Command{
@@ -49,5 +50,5 @@ func runAPI(cmd *cobra.Command, args []string) error {
 	router.Handle("/graphiql", playground.Handler("GentQL", "/graphql"))
 
 	fmt.Printf("starting server at %s\n", cfg.Server.DisplayAddr())
-	return http.ListenAndServe(cfg.Server.Addr(), router)
+	return sig.ListenAndServe(ctx, cfg.Server.Addr(), router, 3*time.Second)
 }
