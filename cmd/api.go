@@ -5,6 +5,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/spf13/cobra"
 
 	"github.com/nikkomiu/gentql/gql"
@@ -22,6 +23,13 @@ func init() {
 
 func runAPI(cmd *cobra.Command, args []string) error {
 	router := chi.NewRouter()
+
+	router.Use(
+		middleware.RequestID,
+		middleware.RealIP,
+		middleware.Logger,
+		middleware.Recoverer,
+	)
 
 	srv := gql.NewServer()
 	router.Handle("/graphql", srv)
