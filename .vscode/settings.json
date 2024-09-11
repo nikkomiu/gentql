@@ -8,6 +8,7 @@
     "**/Thumbs.db": true,
     "gql/{generated,model/*_gen}.go": true,
     "ent/{enttest/,hook/,migrate/,predicate/,runtime/,client.go,ent.go,mutation.go,runtime.go,tx.go,*_create.go,*_delete.go,*_query.go,*_update.go}": true,
-    "ent/{note}/": true
+    "ent/{gql_*.go}": true,
+    "ent/{note}{/,.go}": true
   }
 }

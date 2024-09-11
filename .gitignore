@@ -2,5 +2,6 @@ gql/model/*_gen.go
 gql/generated.go
 
 ent/*
+!ent/entc.go
 !ent/generate.go
 !ent/schema/
