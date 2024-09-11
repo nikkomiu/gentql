@@ -7,7 +7,8 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use: "gentql",
+	Use:   "gentql",
+	Short: "GentQL backend application services.",
 
 	SilenceUsage: true,
 }

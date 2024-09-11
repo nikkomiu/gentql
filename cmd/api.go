@@ -7,8 +7,9 @@ import (
 )
 
 var apiCmd = &cobra.Command{
-	Use:  "api",
-	RunE: runAPI,
+	Use:   "api",
+	Short: "Start the API services for gentql",
+	RunE:  runAPI,
 
 	SilenceUsage: true,
 }
