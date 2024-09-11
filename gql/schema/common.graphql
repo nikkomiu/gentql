@@ -18,6 +18,6 @@ interface Node {
 }
 
 type Query {
-  hello(name: String!): String!
   node(nodeId: ID!): Node
+  ping: String!
 }

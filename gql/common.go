@@ -11,11 +11,6 @@ import (
 	"github.com/nikkomiu/gentql/ent/note"
 )
 
-// Hello is the resolver for the hello field.
-func (r *queryResolver) Hello(ctx context.Context, name string) (string, error) {
-	return fmt.Sprintf("Hello, %s!", name), nil
-}
-
 // Node is the resolver for the node field.
 func (r *queryResolver) Node(ctx context.Context, nodeID string) (ent.Noder, error) {
 	rawNodeID, err := base64.RawURLEncoding.DecodeString(nodeID)
@@ -41,6 +36,11 @@ func (r *queryResolver) Node(ctx context.Context, nodeID string) (ent.Noder, err
 	default:
 		return nil, fmt.Errorf("failed parse node id type")
 	}
+}
+
+// Ping is the resolver for the ping field.
+func (r *queryResolver) Ping(ctx context.Context) (string, error) {
+	return "pong", nil
 }
 
 // Query returns QueryResolver implementation.

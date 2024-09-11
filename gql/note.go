@@ -7,11 +7,10 @@ import (
 	"fmt"
 
 	"entgo.io/contrib/entgql"
-	"github.com/yuin/goldmark"
-
 	"github.com/nikkomiu/gentql/ent"
 	"github.com/nikkomiu/gentql/ent/note"
 	"github.com/nikkomiu/gentql/gql/model"
+	"github.com/yuin/goldmark"
 )
 
 // CreateNote is the resolver for the createNote field.
