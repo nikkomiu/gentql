@@ -18,6 +18,9 @@ resolver:
 
 omit_gqlgen_file_notice: true
 
+autobind:
+  - github.com/nikkomiu/gentql/ent
+
 models:
   ID:
     model:
