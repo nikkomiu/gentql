@@ -1,17 +1,19 @@
 package cmd
 
 import (
-	"fmt"
+	"net/http"
 
+	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/go-chi/chi/v5"
 	"github.com/spf13/cobra"
+
+	"github.com/nikkomiu/gentql/gql"
 )
 
 var apiCmd = &cobra.Command{
 	Use:   "api",
 	Short: "Start the API services for gentql",
 	RunE:  runAPI,
-
-	SilenceUsage: true,
 }
 
 func init() {
@@ -19,6 +21,16 @@ func init() {
 }
 
 func runAPI(cmd *cobra.Command, args []string) error {
-	fmt.Println("hello api")
+	router := chi.NewRouter()
+
+	srv := gql.NewServer()
+	router.Handle("/graphql", srv)
+	router.Handle("/graphiql", playground.Handler("GentQL", "/graphql"))
+
+	err := http.ListenAndServe(":8080", router)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
