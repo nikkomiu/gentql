@@ -10,13 +10,24 @@ type Note implements Node {
   updatedAt: Time!
 }
 
+type NoteConnection {
+  edges: [NoteEdge]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type NoteEdge {
+  node: Note
+  cursor: Cursor!
+}
+
 input NoteInput {
   title: String!
   body: String!
 }
 
 extend type Query {
-  notes: [Note!]!
+  notes(after: Cursor, first: Int, before: Cursor, last: Int): NoteConnection!
 }
 
 extend type Mutation {

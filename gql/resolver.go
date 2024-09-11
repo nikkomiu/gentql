@@ -7,7 +7,7 @@ import (
 	"github.com/nikkomiu/gentql/ent"
 )
 
-//go:generate go run github.com/99designs/gqlgen generate
+//go:generate go run github.com/99designs/gqlgen@latest generate
 
 type Resolver struct {
 	ent *ent.Client

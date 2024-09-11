@@ -6,10 +6,12 @@ import (
 	"encoding/base64"
 	"fmt"
 
+	"entgo.io/contrib/entgql"
+	"github.com/yuin/goldmark"
+
 	"github.com/nikkomiu/gentql/ent"
 	"github.com/nikkomiu/gentql/ent/note"
 	"github.com/nikkomiu/gentql/gql/model"
-	"github.com/yuin/goldmark"
 )
 
 // CreateNote is the resolver for the createNote field.
@@ -62,8 +64,8 @@ func (r *noteResolver) BodyHTML(ctx context.Context, obj *ent.Note) (string, err
 }
 
 // Notes is the resolver for the notes field.
-func (r *queryResolver) Notes(ctx context.Context) ([]*ent.Note, error) {
-	return r.ent.Note.Query().All(ctx)
+func (r *queryResolver) Notes(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int) (*ent.NoteConnection, error) {
+	return r.ent.Note.Query().Paginate(ctx, after, first, before, last)
 }
 
 // Mutation returns MutationResolver implementation.
