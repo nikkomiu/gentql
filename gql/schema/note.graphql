@@ -1,4 +1,4 @@
-type Note {
+type Note implements Node {
   id: Int!
   nodeId: ID!
 

@@ -3,9 +3,11 @@ package gql
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"fmt"
 
 	"github.com/nikkomiu/gentql/ent"
+	"github.com/nikkomiu/gentql/ent/note"
 	"github.com/nikkomiu/gentql/gql/model"
 	"github.com/yuin/goldmark"
 )
@@ -30,7 +32,7 @@ func (r *mutationResolver) DeleteNote(ctx context.Context, id int) (bool, error)
 
 // NodeID is the resolver for the nodeId field.
 func (r *noteResolver) NodeID(ctx context.Context, obj *ent.Note) (string, error) {
-	panic(fmt.Errorf("not implemented: NodeID - nodeId"))
+	return base64.RawURLEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%d", note.Table, obj.ID))), nil
 }
 
 // BodyMarkdown is the resolver for the bodyMarkdown field.

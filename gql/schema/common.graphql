@@ -1,5 +1,10 @@
 scalar Time
 
+interface Node {
+  nodeId: ID!
+}
+
 type Query {
   hello(name: String!): String!
+  node(nodeId: ID!): Node
 }
