@@ -1,11 +1,13 @@
 package gql
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 
 	"github.com/nikkomiu/gentql/ent"
 	"github.com/nikkomiu/gentql/gql/model"
+	"github.com/yuin/goldmark"
 )
 
 // CreateNote is the resolver for the createNote field.
@@ -33,12 +35,16 @@ func (r *noteResolver) NodeID(ctx context.Context, obj *ent.Note) (string, error
 
 // BodyMarkdown is the resolver for the bodyMarkdown field.
 func (r *noteResolver) BodyMarkdown(ctx context.Context, obj *ent.Note) (string, error) {
-	panic(fmt.Errorf("not implemented: BodyMarkdown - bodyMarkdown"))
+	return obj.Body, nil
 }
 
 // BodyHTML is the resolver for the bodyHtml field.
 func (r *noteResolver) BodyHTML(ctx context.Context, obj *ent.Note) (string, error) {
-	panic(fmt.Errorf("not implemented: BodyHTML - bodyHtml"))
+	var buf bytes.Buffer
+	if err := goldmark.Convert([]byte(obj.Body), &buf); err != nil {
+		return "", err
+	}
+	return buf.String(), nil
 }
 
 // Notes is the resolver for the notes field.
