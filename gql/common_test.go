@@ -12,12 +12,17 @@ import (
 	"github.com/nikkomiu/gentql/gql"
 )
 
+func ContextT(t *testing.T) context.Context {
+	ctx, cancel := context.WithCancel(context.Background())
+	t.Cleanup(cancel)
+	return ctx
+}
+
 func TestPing(t *testing.T) {
 	// Arrange
 	expected := "pong"
 	resolver := gql.NewResolver(nil)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := ContextT(t)
 
 	// Act
 	res, err := resolver.Resolvers.Query().Ping(ctx)
@@ -33,8 +38,7 @@ func TestPing(t *testing.T) {
 }
 
 func TestNode(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := ContextT(t)
 	entClient := enttest.Open(t, "sqlite3", "file:ent?mode=memory&_fk=1")
 	defer entClient.Close()
 	resolver := gql.NewResolver(entClient)
@@ -108,8 +112,7 @@ func TestNode(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			ctx, cancel := context.WithCancel(context.Background())
-			defer cancel()
+			ctx := ContextT(t)
 
 			node, err := resolver.Resolvers.Query().Node(ctx, tc.nodeID)
 
