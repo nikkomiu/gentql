@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/nikkomiu/gentql/ent"
 	"github.com/nikkomiu/gentql/ent/enttest"
@@ -34,6 +35,8 @@ func TestPing(t *testing.T) {
 	res, err := resolver.Resolvers.Query().Ping(ctx)
 
 	// Assert
+	assert.NoError(t, err)
+	assert.Equal(t, expected, res)
 	if err != nil {
 		t.Errorf("expected error to be nil but got: %s", err)
 	}
@@ -49,6 +52,7 @@ func TestNode(t *testing.T) {
 	resolver := gql.NewResolver(entClient)
 
 	note, err := entClient.Note.Create().SetTitle("Test Note 1").SetBody("Test Note Body 1").Save(ctx)
+	assert.NoError(t, err)
 	if err != nil {
 		t.Errorf("expected note to be created, but got err: %s", err)
 	}
@@ -121,14 +125,11 @@ func TestNode(t *testing.T) {
 
 			node, err := resolver.Resolvers.Query().Node(ctx, tc.nodeID)
 
-			if tc.expectedErr && err == nil {
-				t.Errorf("expected err but got none")
-			} else if !tc.expectedErr && err != nil {
-				t.Errorf("expected no error but got: %s", err)
-			}
-
-			if tc.expectedNode && node == nil {
-				t.Errorf("expected node but got nil")
+			assert.Equal(t, tc.expectedErr, err != nil, "expected error to be %v but got: %s", tc.expectedErr, err)
+			if tc.expectedNode {
+				assert.NotNil(t, node, "expected node to be not nil")
+			} else {
+				assert.Nil(t, node, "expected node to be nil")
 			}
 		})
 	}

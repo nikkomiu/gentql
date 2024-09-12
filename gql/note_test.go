@@ -5,6 +5,7 @@ import (
 
 	"github.com/nikkomiu/gentql/ent"
 	"github.com/nikkomiu/gentql/gql"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNoteNodeID(t *testing.T) {
@@ -19,13 +20,8 @@ func TestNoteNodeID(t *testing.T) {
 	})
 
 	// Assert
-	if err != nil {
-		t.Errorf("expected err to be nil, but got: %s", err)
-	}
-
-	if nodeID != expectedNodeID {
-		t.Errorf("expected NodeID to be '%s', but got '%s'", nodeID, expectedNodeID)
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, expectedNodeID, nodeID)
 }
 
 func TestNoteBodyMarkdown(t *testing.T) {
@@ -38,13 +34,8 @@ func TestNoteBodyMarkdown(t *testing.T) {
 	str, err := resolver.Resolvers.Note().BodyMarkdown(ctx, obj)
 
 	// Assert
-	if err != nil {
-		t.Errorf("expected no error, but got: %s", err)
-	}
-
-	if str != obj.Body {
-		t.Errorf("expected markdown to be: %s, but got: %s", obj.Body, str)
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, obj.Body, str)
 }
 
 func TestNoteBodyHTML(t *testing.T) {
@@ -58,11 +49,6 @@ func TestNoteBodyHTML(t *testing.T) {
 	str, err := resolver.Resolvers.Note().BodyHTML(ctx, obj)
 
 	// Assert
-	if err != nil {
-		t.Errorf("expected no error, but got: %s", err)
-	}
-
-	if str != expected {
-		t.Errorf("expected markdown to be: %s, but got: %s", expected, str)
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, expected, str)
 }
