@@ -3,11 +3,13 @@ package gql_test
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"entgo.io/contrib/entgql"
 
 	"github.com/nikkomiu/gentql/ent"
 	"github.com/nikkomiu/gentql/gql"
+	"github.com/nikkomiu/gentql/gql/model"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -139,6 +141,238 @@ func TestNoteList(t *testing.T) {
 			assert.NoError(t, err)
 			assert.Len(t, notes.Edges, tc.expectedLen)
 			assert.Equal(t, totalCount, notes.TotalCount)
+		})
+	}
+}
+
+func TestNoteCreate(t *testing.T) {
+	entClient := EntT(t)
+	resolver := gql.NewResolver(entClient)
+
+	tt := []struct {
+		name string
+
+		input model.NoteInput
+
+		expectedErr  bool
+		expectedNote *ent.Note
+	}{
+		{
+			name: "default",
+
+			input: model.NoteInput{
+				Title: "Test Note",
+				Body:  "Test Note Body",
+			},
+
+			expectedNote: &ent.Note{
+				Title: "Test Note",
+				Body:  "Test Note Body",
+			},
+		},
+		{
+			name: "empty title",
+
+			input: model.NoteInput{
+				Body: "Test Note Body",
+			},
+
+			expectedErr: true,
+		},
+		{
+			name: "title too short",
+
+			input: model.NoteInput{
+				Title: "T",
+				Body:  "Test Note Body",
+			},
+
+			expectedErr: true,
+		},
+		{
+			name: "empty body",
+
+			input: model.NoteInput{
+				Title: "Test Note",
+			},
+
+			expectedNote: &ent.Note{
+				Title: "Test Note",
+				Body:  "",
+			},
+		},
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			// Arrange
+			ctx := ContextT(t)
+			preCreateTime := time.Now()
+
+			// Act
+			note, err := resolver.Resolvers.Mutation().CreateNote(ctx, tc.input)
+
+			// Assert
+			assert.Equal(t, tc.expectedErr, err != nil, "expected error to be %v, got %v", tc.expectedErr, err)
+			if tc.expectedNote != nil {
+				assert.NotEmpty(t, note.ID)
+				assert.Equal(t, tc.expectedNote.Title, note.Title)
+				assert.Equal(t, tc.expectedNote.Body, note.Body)
+				assert.True(t, note.CreatedAt.After(preCreateTime))
+				assert.True(t, note.UpdatedAt.After(preCreateTime))
+			}
+		})
+	}
+}
+
+func TestNoteUpdate(t *testing.T) {
+	entClient := EntT(t)
+	resolver := gql.NewResolver(entClient)
+	note := entClient.Note.Create().SetTitle("Test Note").SetBody("Test Note Body").SaveX(ContextT(t))
+
+	tt := []struct {
+		name string
+
+		id    int
+		input model.NoteInput
+
+		expectedErr  bool
+		expectedNote *ent.Note
+	}{
+		{
+			name: "default",
+
+			id: note.ID,
+			input: model.NoteInput{
+				Title: "Test Note",
+				Body:  "Test Note Body",
+			},
+
+			expectedNote: &ent.Note{
+				Title: "Test Note",
+				Body:  "Test Note Body",
+			},
+		},
+		{
+			name: "empty title",
+
+			id: note.ID,
+			input: model.NoteInput{
+				Body: "Test Note Body",
+			},
+
+			expectedErr: true,
+		},
+		{
+			name: "title too short",
+
+			id: note.ID,
+			input: model.NoteInput{
+				Title: "T",
+				Body:  "Test Note Body",
+			},
+
+			expectedErr: true,
+		},
+		{
+			name: "empty body",
+
+			id: note.ID,
+			input: model.NoteInput{
+				Title: "Test Note",
+			},
+
+			expectedNote: &ent.Note{
+				Title: "Test Note",
+				Body:  "",
+			},
+		},
+		{
+			name: "no change",
+
+			id: note.ID,
+			input: model.NoteInput{
+				Title: note.Title,
+				Body:  note.Body,
+			},
+
+			expectedNote: note,
+		},
+		{
+			name: "not found",
+
+			id: 999,
+			input: model.NoteInput{
+				Title: "Test Note",
+				Body:  "Test Note Body",
+			},
+
+			expectedErr: true,
+		},
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			// Arrange
+			ctx := ContextT(t)
+			preCreateTime := time.Now()
+
+			// Act
+			note, err := resolver.Resolvers.Mutation().UpdateNote(ctx, tc.id, tc.input)
+
+			// Assert
+			assert.Equal(t, tc.expectedErr, err != nil, "expected error to be %v, got %v", tc.expectedErr, err)
+			if tc.expectedNote != nil {
+				assert.NotEmpty(t, note.ID)
+				assert.Equal(t, tc.expectedNote.Title, note.Title)
+				assert.Equal(t, tc.expectedNote.Body, note.Body)
+				assert.True(t, note.CreatedAt.Before(preCreateTime))
+				assert.True(t, note.UpdatedAt.After(preCreateTime))
+			}
+		})
+	}
+}
+
+func TestNoteDelete(t *testing.T) {
+	entClient := EntT(t)
+	resolver := gql.NewResolver(entClient)
+	note := entClient.Note.Create().SetTitle("Test Note").SetBody("Test Note Body").SaveX(ContextT(t))
+
+	tt := []struct {
+		name string
+
+		id int
+
+		expectedErr bool
+		expectedRes bool
+	}{
+		{
+			name: "default",
+
+			id: note.ID,
+
+			expectedRes: true,
+		},
+		{
+			name: "not found",
+
+			id: 999,
+
+			expectedRes: false,
+		},
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			// Arrange
+			ctx := ContextT(t)
+
+			// Act
+			res, err := resolver.Resolvers.Mutation().DeleteNote(ctx, tc.id)
+
+			// Assert
+			assert.Equal(t, tc.expectedErr, err != nil, "expected error to be %v, got %v", tc.expectedErr, err)
+			assert.Equal(t, tc.expectedRes, res)
 		})
 	}
 }

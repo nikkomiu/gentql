@@ -17,6 +17,7 @@ type Note struct {
 func (Note) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("title").
+			MinLen(3).
 			Annotations(
 				entgql.OrderField("TITLE"),
 			),
