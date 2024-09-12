@@ -1,10 +1,17 @@
 package config
 
 import (
+	"context"
 	"fmt"
 	"time"
 
 	"github.com/nikkomiu/gentql/pkg/env"
+)
+
+type contextKey string
+
+const (
+	appContextKey contextKey = "appConfig"
 )
 
 type App struct {
@@ -36,10 +43,8 @@ func (hs HTTPServer) Addr() string {
 	return fmt.Sprintf("%s:%d", hs.Host, hs.Port)
 }
 
-var currentApp *App
-
-func loadApp() {
-	currentApp = &App{
+func WithApp(ctx context.Context) (context.Context, App) {
+	cfg := &App{
 		Server: HTTPServer{
 			Host: env.Str("ADDRESS", ""),
 			Port: env.Int("PORT", 8080),
@@ -51,11 +56,15 @@ func loadApp() {
 			URL:    env.Str("DATABASE_URL", "postgres://localhost/gentql_dev?sslmode=disable"),
 		},
 	}
+
+	return context.WithValue(ctx, appContextKey, cfg), *cfg
 }
 
-func GetApp() App {
-	if currentApp == nil {
-		loadApp()
+func AppFromContext(ctx context.Context) App {
+	c, ok := ctx.Value(appContextKey).(*App)
+	if !ok {
+		fmt.Println("failed to load app config from context")
 	}
-	return *currentApp
+
+	return *c
 }

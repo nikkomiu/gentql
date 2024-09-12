@@ -26,13 +26,13 @@ func init() {
 }
 
 func runAPI(cmd *cobra.Command, args []string) error {
-	cfg := config.GetApp()
+	ctx, cfg := config.WithApp(cmd.Context())
 
 	entClient, err := ent.Open(cfg.Database.Driver, cfg.Database.URL)
 	if err != nil {
 		return errors.NewExitCode(err, 3)
 	}
-	ctx := ent.NewContext(cmd.Context(), entClient)
+	ctx = ent.NewContext(ctx, entClient)
 	defer entClient.Close()
 
 	router := chi.NewRouter()

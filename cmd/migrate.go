@@ -28,7 +28,7 @@ func runMigrate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	cfg := config.GetApp()
+	ctx, cfg := config.WithApp(cmd.Context())
 
 	entClient, err := ent.Open(cfg.Database.Driver, cfg.Database.URL)
 	if err != nil {
@@ -37,8 +37,8 @@ func runMigrate(cmd *cobra.Command, args []string) error {
 	defer entClient.Close()
 
 	if dryRun {
-		return entClient.Schema.WriteTo(cmd.Context(), os.Stdout)
+		return entClient.Schema.WriteTo(ctx, os.Stdout)
 	} else {
-		return entClient.Schema.Create(cmd.Context())
+		return entClient.Schema.Create(ctx)
 	}
 }

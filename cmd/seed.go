@@ -19,7 +19,7 @@ func init() {
 }
 
 func runSeed(cmd *cobra.Command, args []string) (err error) {
-	cfg := config.GetApp()
+	ctx, cfg := config.WithApp(cmd.Context())
 
 	entClient, err := ent.Open(cfg.Database.Driver, cfg.Database.URL)
 	if err != nil {
@@ -37,7 +37,7 @@ func runSeed(cmd *cobra.Command, args []string) (err error) {
 	}
 
 	fmt.Println("Seeding notes...")
-	err = entClient.Note.CreateBulk(notes...).Exec(cmd.Context())
+	err = entClient.Note.CreateBulk(notes...).Exec(ctx)
 
 	// create additional seeds here
 
