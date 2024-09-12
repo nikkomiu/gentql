@@ -5,6 +5,7 @@ RUN apk add --update \
     bash zsh zsh-vcs git sudo \
     age htop inotify-tools \
     nodejs npm \
+    gcc musl-dev \
     docker-cli docker-cli-buildx postgresql-client curl
 
 # Install sops
