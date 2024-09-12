@@ -18,6 +18,12 @@ func ContextT(t *testing.T) context.Context {
 	return ctx
 }
 
+func EntT(t *testing.T) *ent.Client {
+	entClient := enttest.Open(t, "sqlite3", "file:ent?mode=memory&_fk=1")
+	t.Cleanup(func() { entClient.Close() })
+	return entClient
+}
+
 func TestPing(t *testing.T) {
 	// Arrange
 	expected := "pong"
@@ -39,8 +45,7 @@ func TestPing(t *testing.T) {
 
 func TestNode(t *testing.T) {
 	ctx := ContextT(t)
-	entClient := enttest.Open(t, "sqlite3", "file:ent?mode=memory&_fk=1")
-	defer entClient.Close()
+	entClient := EntT(t)
 	resolver := gql.NewResolver(entClient)
 
 	note, err := entClient.Note.Create().SetTitle("Test Note 1").SetBody("Test Note Body 1").Save(ctx)
