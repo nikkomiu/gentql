@@ -8,14 +8,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var seedCmd = &cobra.Command{
-	Use:   "seed",
-	Short: "Seed the database with initial values",
-	RunE:  runSeed,
-}
-
-func init() {
-	rootCmd.AddCommand(seedCmd)
+func newSeedCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "seed",
+		Short: "Seed the database with initial values",
+		RunE:  runSeed,
+	}
 }
 
 func runSeed(cmd *cobra.Command, args []string) (err error) {

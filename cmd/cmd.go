@@ -8,13 +8,29 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var rootCmd = &cobra.Command{
-	Use:   "gentql",
-	Short: "GentQL backend application services.",
+func newRootCmd() *cobra.Command {
+	rootCmd := &cobra.Command{
+		Use:   "gentql",
+		Short: "GentQL backend application services.",
 
-	SilenceUsage: true,
+		SilenceUsage: true,
+	}
+
+	rootCmd.AddCommand(
+		newAPICmd(),
+		newMigrateCmd(),
+		newSeedCmd(),
+	)
+
+	return rootCmd
 }
 
-func Execute(ctx context.Context) error {
+func Execute(ctx context.Context, opts ...Option) error {
+	rootCmd := newRootCmd()
+
+	for _, opt := range opts {
+		opt.CmdOpt(rootCmd)
+	}
+
 	return rootCmd.ExecuteContext(ctx)
 }

@@ -15,14 +15,12 @@ import (
 	"github.com/nikkomiu/gentql/pkg/sig"
 )
 
-var apiCmd = &cobra.Command{
-	Use:   "api",
-	Short: "Start the API services for gentql",
-	RunE:  runAPI,
-}
-
-func init() {
-	rootCmd.AddCommand(apiCmd)
+func newAPICmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "api",
+		Short: "Start the API services for gentql",
+		RunE:  runAPI,
+	}
 }
 
 func runAPI(cmd *cobra.Command, args []string) error {

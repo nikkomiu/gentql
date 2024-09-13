@@ -10,16 +10,16 @@ import (
 	"github.com/nikkomiu/gentql/pkg/errors"
 )
 
-var migrateCmd = &cobra.Command{
-	Use:   "migrate",
-	Short: "Migrate the database between versions",
-	RunE:  runMigrate,
-}
+func newMigrateCmd() *cobra.Command {
+	migrateCmd := &cobra.Command{
+		Use:   "migrate",
+		Short: "Migrate the database between versions",
+		RunE:  runMigrate,
+	}
 
-func init() {
 	migrateCmd.Flags().BoolP("dry", "d", false, "Write the schema output to stdout instead of updating the database")
 
-	rootCmd.AddCommand(migrateCmd)
+	return migrateCmd
 }
 
 func runMigrate(cmd *cobra.Command, args []string) error {
